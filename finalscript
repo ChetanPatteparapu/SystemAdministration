@@ -1,0 +1,271 @@
+#!/bin/bash
+clear
+while true
+do
+clear
+     #Main Menu
+echo "================================="
+echo "-------------Menu----------------"
+echo "================================="
+echo "1) Account Management"
+echo "2) Process Management"
+echo "3) Date & Time"
+echo "4) Contact Us"
+echo "5) Rate this application"
+echo "6) Quit/LogOut"
+echo "7) Shutdown/Re-start/Amend"
+echo ""
+echo -e "Enter your selection \c"
+read answer
+case "$answer" in
+1)  #Account Management Menu
+    clear
+    while true
+    do
+    clear
+    echo "===================================="
+    echo "---------Account Management---------"
+    echo "===================================="
+    echo "1) Create new user account"
+    echo "2) Create multiple new user accounts"
+    echo "3) Delete user account"
+    echo "4) Check total accounts"
+    echo "5) Go-back"
+    echo ""
+    echo -e "Enter your selection \c"
+    read answer
+    case "$answer" in
+    1) #creating new user name
+       echo -n "Enter your new user name: " #user enters the new user name
+       read username #It reads the user's input
+       sudo useradd $username -m -s /bin/bash #command to create new user name
+       sudo passwd $username #command to set the password
+       ;;
+    2) #creating new multiple accounts
+       echo -n "Enter the number of accounts you want to create (enter in numbers)?: "
+       read accountsnumber #It reads the user's input
+       if (( accountsnumber > 0 )) #if statement to enter correct value
+       then
+         number=0
+         serialnumber=1 #setting the serial number start from 1
+         echo -n "Create a file name to save the user details: " #user enters a file name to save the user details
+         read filename
+         while [ $number -lt $accountsnumber ] #while loop for creating multiple accounts
+         do
+         clear
+         echo "NOTE: Password section is not encripted"
+         echo ""
+         echo -n "$serialnumber) Enter the username: " #user enters the new username
+         read username #it reads the user's input
+         echo -n "   Enter a new password: " #user sets up a new password
+         read password  #user enters new password
+         echo "$username:$password:50$number:50$number:$username:/home/$username:/bin/bash" >>$filename.log #saving the details in a new file
+         sudo newusers $filename.log #comand for creating multiple accounts
+         number=$(( number+1 )) #adding by 1 everytime this loops executes
+         serialnumber=$(( serialnumber+1 )) #adding +1 to the serial number whenever it executes
+         echo "*) Congrats Account(s) successfully created"
+         done
+      else
+         echo "ERROR: Please enter a valid number" #displays an error message when user enters a invalid key
+      fi
+      ;;
+    3) #deleting a user name
+      echo "Below shows the total number of accounts on this system."
+      ls /home #command to display the total accounts on the system
+      echo ""
+      echo -n "Enter your user name: " #user enters a username to delete
+      read user #It reads the user's input
+      echo ""
+      echo "By this you confirm to delete your account"
+      sudo userdel $user #command to delete username
+      sudo rm -r  /home/$user  #command to delete username from homedirectory
+      ;;
+    4) #shows the total accounts on the system
+      echo ""
+      echo "Below shows the current total accounts on the system:"
+      ls /home #command displays the total accounts on the system
+      ;;
+    5) #Go-back
+       break ;;
+    *) echo "ERROR: invalid option $answer" #shows error when user enter an invalid key
+    esac
+    echo ""
+    echo -e "Press ENTER to continue \c"
+    read input
+    done
+    ;;
+2)  #Process Mangement Menu
+    clear
+    while true
+    do
+    clear
+    echo "===================================="
+    echo "---------Process Management---------"
+    echo "===================================="
+    echo "1) Processes currently running"
+    echo "2) Processes owned by the current user"
+    echo "3) Processes owned by all users"
+    echo "4) Kill a process by name"
+    echo "5) Kill a process with PID number"
+    echo "6) Go-back"
+    echo ""
+    echo -e "Enter your selection \c"
+    read answer
+    case "$answer" in
+    1)           #Processes currently running
+      ps ;;      #command for processes currently running
+    2)           #Processes owned by the current user
+      ps -u ;;   #command for processes owned by the current user
+    3)           #Processes owned by all users
+      ps -axu ;; #command for processes owned by all users
+    4)           #Killing a process without PID number
+      echo "NOTE: You can kill only your processes, root user can kill any process"
+      echo ""
+      echo -n "Enter the name of the process you want to kill: " #user enter the name of the process he/she wants to kill
+      read name
+       kill -HUP $(pidof $name) ;; #command to kill a processes without PID number
+    5) #killing a process by PID number
+       top #command displays the processes in real-time view of the running system.
+      echo -n "Enter the Process ID number(PID) you want to kill: " #user enters the PID number he/she wants to kill
+      read number #It reads the user's input
+      kill $number ;;  #command to kill process by pid number
+    6)
+      break ;;
+   *) echo "ERROR: invalid option $answer" #shows error when user enters invalid command
+   esac
+   echo ""
+   echo -e "Press ENTER to continue \c"
+   read input
+   done ;;
+3) #Date & Time
+   cal #Shows today's date in the calender
+   echo ""
+   date ;; #Shows Date and Time
+4)    #Contact us
+      clear
+      echo -n "Enter your first name: " #user enter the first name
+      read firstname #It reads the user's input
+      echo -n "Enter your email address: " #user enters the second name
+      read email #it reads the user's input
+      echo -n "Enter your phone number (optional): " #user enters the phone number (optional)
+      read phone #it reads the user's input
+      clear
+      echo "Saving information..."
+      echo "Name: $firstname $secondname, Email: $email, Mobile number: $phone"
+      echo "Name: $firstname $secondname, Email: $email, Mobile number: $phone" >>details.log  #saves the details in this file, so that I can check it later
+      echo ""
+      echo "Thank you for your patience $firstname"
+      echo "We will get back to you soon..."
+      echo ""
+      echo ""
+      echo "Please press ENTER to continue"
+      read
+      clear
+      echo "Have a good day $firstname"
+      ;;
+5) #Rating this application
+      clear
+echo "Every feedback counts"
+echo ""
+echo -n "Enter your name: " #user enters his name
+read name #it reads the user's input
+echo -n "Rate us (out of 10): " #user enters his rating out of 10
+read rating #it reads the user's input
+    if (( $rating > 0 )) && (( $rating <= 5 )) #if user enters a rating which is <= 5 he will be asked for an additional feedback which is completely optional
+    then
+      echo "Thanks for your valuable time to feedback us!"
+      echo ""
+      echo ""
+      echo "Let us know more what went wrong."
+      echo -n "Type here (optional): " #optional statement
+      read detailedfeedback
+      echo "Name: $name, Rating: $rating, what went wrong?: $detailedfeedback" >>feedback.log #saves the details in this file
+      elif (( $rating > 5 )) && (( $rating <= 10 )) #if user enter a rating which is >=6, below instructions execute
+      then
+      echo "Thanks for your valuable time to feedback us!"
+      echo "Name: $name, Rating: $rating" >>feedback.log #saves the details in this file
+      else
+      echo "ERROR: Please enter a number between 1-10" #shows error if user enters invalid key
+      fi ;;
+
+6)    #QUIT/Log Out
+      PS3='Please enter your option: '
+      options=("Quit" "Log Out" "Go-back") #Menu inside a menu
+      select opt in "${options[@]}"
+      do
+       case $opt in
+      "Quit")
+      exit ;; #command to quit the application
+      "Log Out") #command to Log out the user
+      gnome-session-quit #command to log out the user
+      exit ;;
+      "Go-back")
+       break ;;
+      *) echo "ERROR: invalid option $REPLY" ;; #shows ERROR when user enter an invalid character
+      esac
+      done ;;
+7)    #shutdown/Re-start/Amend
+      PS3='Please enter your option: ' #Menu
+      options=("Shutdown" "Re-Start" "Cancel Shutdown/Re-Start" "Go-back")
+      select opt in "${options[@]}"
+      do
+        case $opt in
+      "Shutdown")
+          clear
+          PS3='Please enter your option: ' #Menu inside a menu
+          options=("Shutdown Now" "Schedule a timer" "Go-back")
+          select opt in "${options[@]}"
+          do
+            case $opt in
+          "Shutdown Now")
+          shutdown -h now #Command to shutdown right now
+          break ;;
+          "Schedule a timer")
+          echo -n "Enter the time limit in mins: "
+          read timer1 #it reads the user's input
+          shutdown -h +$timer1 #Command to set a timer for the shutdown
+          break ;;
+          "Go-back")
+          break ;;
+          *)echo "ERROR: invalid option $REPLY" ;;
+          esac
+          done;;
+      "Re-Start")
+          clear
+          PS3='Please enter your option: ' #Menu inside a menu
+          options=("Re-Start now" "Schedule a timer" "Go-back")
+          select opt in "${options[@]}"
+          do
+          case $opt in
+          "Re-Start now")
+          shutdown -r now #command to Re-start right now
+          break ;;
+          "Schedule a timer")
+          echo -n "Enter the time-limit in mins: "
+          read timer2 #it reads the user's input
+          shutdown -r +$timer2 #command to set a timer for the Re-start
+          break ;;
+          "Go-back")
+          break ;;
+          *) echo "ERROR: invalid option $REPLY" ;;
+          esac
+          done ;;
+      "Cancel Shutdown/Re-Start") #Cancel Shutdown/Re-start
+      shutdown -c #command to cancel shutdown/re-start
+      echo ""
+      echo "You have successfully cancelled the Shutdown/Re-Start"
+      break ;;
+      "Go-back")
+       break ;;
+      *) echo "ERROR: invalid option $REPLY" ;; #displays an error message when user enter an invalid character
+      esac
+      break
+      done ;;
+*) echo "ERROR: invalid option $answer"
+esac
+echo ""
+echo -e "Press ENTER to continue \c"
+read input
+done
+
+
